@@ -17,4 +17,4 @@ RUN & ./nuget.exe Install
 
 RUN setx PATH '%PATH%;C:\\Program Files (x86)\\MSBuild\\12.0\\Bin\\msbuild.exe'  
 
-CMD ["msbuild.exe"] 
+CMD ["msbuild.exe"]
