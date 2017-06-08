@@ -2,18 +2,32 @@
 FROM microsoft/dotnet-framework:4.6.2
 SHELL ["powershell"]
 
-# Install MSBuild
-# RUN Invoke-WebRequest "https://download.microsoft.com/download/9/B/B/9BB1309E-1A8F-4A47-A6C5-ECF76672A3B3/BuildTools_Full.exe" \
-#	-UseBasicParsing \
-#	-OutFile ./BuildTools_Full.exe
+# Works, but am I allowed to re-dist MSBuild.exe?
+# COPY ./MSBuild ./MSBuild
+# RUN setx PATH '%PATH%;C:\\MSbuild;'
 
-#RUN ./BuildTools_Full.exe
+# Install Chocolatey
+RUN Set-ExecutionPolicy Bypass
+RUN iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
-COPY ./MSBuild ./MSBuild
+# Install dotnet 4.6.2
+RUN choco install netfx-4.6.2-devpack -y
 
-RUN Invoke-WebRequest "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" \
-	-UseBasicParsing \
-	-OutFile ./nuget.exe
-RUN & ./nuget.exe Install
-RUN setx PATH '%PATH%;C:\\MSBuild\\12.0\\Bin\\'  
+# Install MSBuild 15.0
+RUN choco install microsoft-build-tools -y
+
+# Install Docker
+RUN choco install nuget.commandline
+# RUN Install-Module -Name DockerMsftProvider -Force
+# RUN Install-Package -Name docker -ProviderName DockerMsftProvider -Force
+
 CMD ["powershell"]
+
+# RUN Invoke-WebRequest "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" \
+#	-UseBasicParsing \
+#	-OutFile ./nuget.exe
+# RUN & ./nuget.exe Install
+
+# COPY ./vs_buildtools.exe ./
+# RUN ./vs_buildtools.exe --add Microsoft.VisualStudio.Workload.WebBuildTools --quiet --wait
+# RUN setx PATH '%PATH%;C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\MSbuild\\15.0\\Bin;'
